@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "wedding-bot"
+version = "0.1.0"
+description = "My telegram wedding bot"
+authors = ["GrigoriyKruchinin <GrigoriyKruchinin>"]
+readme = "README.md"
+packages = [{include = "bot"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.3.0"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
