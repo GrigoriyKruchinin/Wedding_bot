@@ -3,8 +3,10 @@ import asyncio
 import logging
 from datetime import datetime
 
+import httpx
 from dotenv import load_dotenv
 
+from translate import Translator
 from aiogram.types import Message
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart, Command
@@ -13,11 +15,15 @@ from aiogram.filters import CommandStart, Command
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
+WEATHER_API_KEY = os.getenv('WEATHER_API')
 
 bot = Bot(TOKEN)
 dp = Dispatcher()
 
 WEDDING_DATE = datetime(2024, 8, 24)
+
+# Координаты Оленьих Прудов
+LAT, LON = 56.466166, 41.552384
 
 GREETING_MESSAGE = (
     "Привет, {username}!\n"
@@ -51,6 +57,33 @@ STICKER_DOG = (
     "CAACAgIAAxkBAAELIitlnrqebILw4fRZ1TxmDvhm6SFo6AACfwEAAj0N6AS98XKpqDIlKDQE"
 )
 
+
+async def get_weather(lat, lon):
+    base_url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+        'lat': lat,
+        'lon': lon,
+        'appid': WEATHER_API_KEY,
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.get(base_url, params=params)
+        weather_data = response.json()
+        t_kelvin = weather_data['main']['temp']
+        t_celsius = round(t_kelvin - 273.15, 1)
+        description_eng = weather_data['weather'][0]['description']
+        translator = Translator("ru")
+        description_ru = translator.translate(description_eng)
+        return t_celsius, description_ru
+
+
+@dp.message(Command('weather'))
+async def weather(message: Message):
+    temperature, description = await get_weather(LAT, LON)
+    await message.answer(
+        f"Погода сейчас:\nТемпература: {temperature}\nОписание: {description}"
+    )
+
+
 @dp.message(CommandStart())
 async def start(message: Message):
     username = message.from_user.full_name
@@ -59,7 +92,7 @@ async def start(message: Message):
 
 
 @dp.message(Command('info'))
-async def help(message: Message):
+async def info(message: Message):
     await message.answer(text=INFO_MESSAGE)
 
 
@@ -71,11 +104,6 @@ async def days_until_wedding(message: Message):
     await message.answer(
         DAYS_LEFT_MESSAGE.format(days_count=days_count, days_word=days_word)
     )
-
-
-@dp.message(Command('weather'))
-async def weather(message: Message):
-    pass
 
 
 @dp.message()
