@@ -19,10 +19,6 @@ async def get_weather(lat, lon):
     }
     async with httpx.AsyncClient() as client:
         response = await client.get(base_url, params=params)
-
-        if response.status_code != 200:
-            raise Exception(f"Не удалось получить данные о погоде 🫣")
-
         weather_data = response.json()
         t_kelvin = weather_data['main']['temp']
         t_celsius = round(t_kelvin - 273.15, 1)
