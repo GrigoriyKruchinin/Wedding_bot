@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "bot"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.8"
 aiogram = "^3.3.0"
 python-dotenv = "^1.0.0"
 httpx = "^0.26.0"
