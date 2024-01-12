@@ -3,13 +3,17 @@ import asyncio
 import logging
 from datetime import datetime
 
-import httpx
 from dotenv import load_dotenv
 
-from translate import Translator
 from aiogram.types import Message
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart, Command
+
+from messages import (
+    GREETING_MESSAGE, INFO_MESSAGE, DAYS_LEFT_MESSAGE,
+    WEATHER_MESSAGE, FALLBACK_MESSAGE, STICKER_DOG
+)
+from weather_utils import get_weather
 
 
 load_dotenv()
@@ -20,68 +24,8 @@ WEATHER_API_KEY = os.getenv('WEATHER_API')
 bot = Bot(TOKEN)
 dp = Dispatcher()
 
-WEDDING_DATE = datetime(2024, 8, 24)
-
-# Координаты Оленьих Прудов
-LAT, LON = 56.466166, 41.552384
-
-GREETING_MESSAGE = (
-    "Привет, {username}!\n"
-    "Я бот для получения информации о свадьбе Гриши и Лены!\n"
-    "Для получения общей информации воспользуйтесь командой /info\n"
-    "Попробуйте все команды, не стесняйтесь!\n"
-)
-
-INFO_MESSAGE = (
-    "Стиль такой-то\n"
-    "Без детей\n"
-    "Не дарите скороварки, мы живем за границей - не увезем!\n"
-    "Сбор там-то\n"
-    "Телефоны организаторов: ____"
-    "И другая инфа!"
-)
-
-DAYS_LEFT_MESSAGE = (
-    "До знаменательной даты осталось {days_count} {days_word}!!!\n"
-    "Еще чуть-чуть и вы сможете поплакать над тем, "
-    "какие Гриша и Лена милые 🥰🥰🥰\n"
-    "Ну и отдохнуть и повеселиться от души 🍾🍾🍾\n"
-)
-
-FALLBACK_MESSAGE = (
-    'Для получения информации о свадьбе Гриши и Лены '
-    'воспользуйтесь встроенными командами!\n'
-)
-
-STICKER_DOG = (
-    "CAACAgIAAxkBAAELIitlnrqebILw4fRZ1TxmDvhm6SFo6AACfwEAAj0N6AS98XKpqDIlKDQE"
-)
-
-
-async def get_weather(lat, lon):
-    base_url = "https://api.openweathermap.org/data/2.5/weather"
-    params = {
-        'lat': lat,
-        'lon': lon,
-        'appid': WEATHER_API_KEY,
-    }
-    async with httpx.AsyncClient() as client:
-        response = await client.get(base_url, params=params)
-        weather_data = response.json()
-        t_kelvin = weather_data['main']['temp']
-        t_celsius = round(t_kelvin - 273.15, 1)
-        description_eng = weather_data['weather'][0]['description']
-        translator = Translator("ru")
-        description_ru = translator.translate(description_eng)
-        return t_celsius, description_ru
-
-
-@dp.message(Command('weather'))
-async def weather(message: Message):
-    temperature, description = await get_weather(LAT, LON)
-    await message.answer(
-        f"Погода сейчас:\nТемпература: {temperature}\nОписание: {description}"
-    )
+WEDDING_DATE = datetime(2024, 8, 24)  # Дата свадьбы
+LAT, LON = 56.466166, 41.552384  # Координаты Оленьих Прудов
 
 
 @dp.message(CommandStart())
@@ -94,6 +38,17 @@ async def start(message: Message):
 @dp.message(Command('info'))
 async def info(message: Message):
     await message.answer(text=INFO_MESSAGE)
+
+
+@dp.message(Command('weather'))
+async def weather(message: Message):
+    temperature, description = await get_weather(LAT, LON)
+    await message.answer(
+        WEATHER_MESSAGE.format(
+            temperature=temperature,
+            description=description
+        )
+    )
 
 
 @dp.message(Command('days_left'))
