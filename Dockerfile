@@ -21,4 +21,4 @@ EXPOSE 80
 ENV NAME World
 
 # Activate virtual environment and run the command
-CMD ["bash", "-c", "source /app/.venv/bin/activate && poetry run python3 bot/main.py"]
+CMD ["poetry shell && poetry run python3 bot/main.py"]
