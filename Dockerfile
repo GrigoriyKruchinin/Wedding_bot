@@ -14,14 +14,11 @@ RUN pip install poetry
 COPY pyproject.toml poetry.lock /app/
 RUN poetry install --no-dev
 
-# Activate virtual environment
-RUN . /app/.venv/bin/activate
-
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
 # Define environment variable
 ENV NAME World
 
-# Run app.py when the container launches
-CMD ["poetry", "run", "python3", "bot/main.py"]
+# Activate virtual environment and run the command
+CMD ["bash", "-c", "source /app/.venv/bin/activate && poetry run python3 bot/main.py"]
