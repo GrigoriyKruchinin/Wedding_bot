@@ -188,17 +188,14 @@ trio = ["trio (>=0.23)"]
 
 [[package]]
 name = "async-timeout"
-version = "4.0.0"
+version = "4.0.3"
 description = "Timeout context manager for asyncio programs"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "async-timeout-4.0.0.tar.gz", hash = "sha256:7d87a4e8adba8ededb52e579ce6bc8276985888913620c935094c2276fd83382"},
-    {file = "async_timeout-4.0.0-py3-none-any.whl", hash = "sha256:f3303dddf6cafa748a92747ab6c2ecf60e0aeca769aee4c151adfce243a05d9b"},
+    {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
+    {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
 ]
-
-[package.dependencies]
-typing-extensions = ">=3.6.5"
 
 [[package]]
 name = "attrs"
@@ -1099,4 +1096,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.1"
-content-hash = "d8f62c420976fbbbda2b6f7253ff1b3eaa9e8c561a0b05406e22aa02d79b90e2"
+content-hash = "ec196a2ef1f92a2764a9e748f32c5452730d670f575681a2be345e82c03cb658"
