@@ -1,6 +1,6 @@
 import os
 import asyncio
-import logging
+# import logging
 from datetime import datetime
 
 from dotenv import load_dotenv
@@ -74,7 +74,7 @@ async def answer(message: Message):
 
 
 async def main():
-    logging.basicConfig(level=logging.INFO)
+    # logging.basicConfig(level=logging.INFO)
     await dp.start_polling(bot)
 
 
