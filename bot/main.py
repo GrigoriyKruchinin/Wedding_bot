@@ -10,8 +10,8 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart, Command
 
 from messages import (
-    GREETING_MESSAGE, INFO_MESSAGE, DAYS_LEFT_MESSAGE,
-    WEATHER_MESSAGE, FALLBACK_MESSAGE, STICKER_DOG
+    GREETING_MESSAGE, INFO_MESSAGE, DAYS_LEFT_MESSAGE, TODAY_WEDDING,
+    WEDDING_WAS_OVER, WEATHER_MESSAGE, FALLBACK_MESSAGE, STICKER_DOG
 )
 from weather_utils import get_weather
 
@@ -56,9 +56,15 @@ async def days_until_wedding(message: Message):
     days_count = (WEDDING_DATE - datetime.now()).days
     days_word = ("дней" if days_count % 10 in {0, 5, 6, 7, 8, 9}
                 or (11 <= days_count <= 19) else "дня")  # noqa
-    await message.answer(
-        DAYS_LEFT_MESSAGE.format(days_count=days_count, days_word=days_word)
-    )
+    if days_count > 0:
+        await message.answer(
+            DAYS_LEFT_MESSAGE.format(days_count=days_count, days_word=days_word)
+        )
+    elif days_count == 0:
+        await message.answer(TODAY_WEDDING)
+    else:
+        await message.answer(WEDDING_WAS_OVER)
+
 
 
 @dp.message()
