@@ -20,5 +20,5 @@ EXPOSE 80
 # Define environment variable
 ENV NAME World
 
-# Activate virtual environment and run the command
-CMD ["poetry shell && poetry run python3 bot/main.py"]
+# Run the application using Poetry
+CMD ["poetry", "run", "python3", "bot/main.py"]
