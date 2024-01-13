@@ -14,11 +14,5 @@ RUN pip install poetry
 COPY pyproject.toml poetry.lock /app/
 RUN poetry install --no-dev
 
-# Make port 80 available to the world outside this container
-EXPOSE 80
-
-# Define environment variable
-ENV NAME World
-
 # Run the application using Poetry
 CMD ["poetry", "run", "python3", "bot/main.py"]
