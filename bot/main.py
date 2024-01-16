@@ -40,11 +40,11 @@ async def info(message: types.Message):
 
 @router.message(Command('weather'))
 async def weather(message: types.Message):
-    temperature, description = await get_weather(LAT, LON)
+    weather_info = await get_weather(LAT, LON)
     await message.answer(
         WEATHER_MESSAGE.format(
-            temperature=temperature,
-            description=description
+            temperature=weather_info.temp_celsius,
+            description=weather_info.description_ru
         )
     )
 

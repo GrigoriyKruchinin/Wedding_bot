@@ -1,13 +1,20 @@
 import os
-
-from dotenv import load_dotenv
 import httpx
+from dotenv import load_dotenv
 from translate import Translator
+from pydantic import BaseModel
 
 load_dotenv()
 
 WEATHER_API_KEY = os.getenv('WEATHER_API')
 WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
+
+
+class Weather(BaseModel):
+    lat: float
+    lon: float
+    temp_celsius: float
+    description_ru: str
 
 
 async def get_weather(lat, lon):
@@ -20,9 +27,13 @@ async def get_weather(lat, lon):
     async with httpx.AsyncClient() as client:
         response = await client.get(base_url, params=params)
         weather_data = response.json()
-        t_kelvin = weather_data['main']['temp']
-        t_celsius = round(t_kelvin - 273.15, 1)
-        description_eng = weather_data['weather'][0]['description']
-        translator = Translator("ru")
-        description_ru = translator.translate(description_eng)
-        return t_celsius, description_ru
+
+        weather_model = Weather(
+            lat=weather_data['coord']['lat'],
+            lon=weather_data['coord']['lon'],
+            temp_celsius=round(weather_data['main']['temp'] - 273.15, 1),
+            description_ru=Translator("ru").translate(
+                weather_data['weather'][0]['description']
+            )
+        )
+        return weather_model
